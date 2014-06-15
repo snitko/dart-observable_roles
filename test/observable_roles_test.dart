@@ -1,6 +1,6 @@
 import 'package:unittest/unittest.dart';
 import 'dart:mirrors';
-import '../lib/observable.dart';
+import '../lib/observable_roles.dart';
 
 class DummyPublisher extends Object with Publisher {}
 

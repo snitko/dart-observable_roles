@@ -1,4 +1,4 @@
-library observable;
+library observable_roles;
 
 import 'dart:mirrors';
 part 'src/publisher.dart';
