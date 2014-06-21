@@ -1,21 +1,50 @@
 part of observable_roles;
 
+/**
+ * Publishes events that are picked by its Subscribers, that in turn invoke
+ * event handlers on them.
+ *
+ * A Publisher has a role and its observing subscribers. To trigger an event,
+ * one calls a `publishEvent()` method from inside or outside of the object,
+ * passing it event name and data. This method, in turn, calls a `Subscriber#captureEvent()`
+ * on each of the observing subscribers. Those subscribers then decide what to do with the event
+ * (which event handler, if any, to invoke) based on the role of the publisher.
+ */
 abstract class Publisher {
 
-  List   observing_subscribers = []  ;
-  String role                  = null;
+  /// All subscribers who listen to this publisher events
+  List observing_subscribers = [];
 
-  addObservingSubscriber(s) {
+  /// The role of this publisher, which is later passed to
+  /// the `Subscriber#captureEvent()` method. It essentially defines
+  /// which handler (if any) in the subscriber is going to be invoked
+  /// for the event.
+  String role = null;
+
+  /**
+   * Adds new subscriber to the list of subscribers, who observe this publisher.
+   */
+  addObservingSubscriber(Subscriber s) {
     if(s is Subscriber)
       observing_subscribers.add(s);                 
     else
       throw new Exception("Can't add `${s}` to subscriber's list of ${this}, because it doesn't implement Subscriber interface.");
   }
 
-  removeObservingSubscriber(s) {
+  /**
+   * Removes a subscriber from the list of subscribers, who observe this publisher.
+   */
+  removeObservingSubscriber(Subscriber s) {
     observing_subscribers.remove(s);
   }
 
+  /**
+   * Publishes an event: notifies all observing subscribers of it.
+   * 
+   * For each subscriber in the list of observing subscribers,
+   * calls a `Subscriber#captureEvent()` method, passing in
+   * the name of the event, prefixed by the role of this publisher.
+   */
   publishEvent(event_name, [data=null]) {
 
     if(data==null) { data = reflect(this).reflectee; }

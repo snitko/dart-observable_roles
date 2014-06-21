@@ -3,7 +3,7 @@ part of observable_roles;
 /**
  * Watches publishers for events they emit, then reacts to each event by invoking event handlers.
  *
- * Subscriber objects are added into publisher's `Pubslisher.observing_subscriber` List.
+ * Subscriber objects are added into publisher's `Pubslisher#observing_subscribers` List.
  * Every time such a publisher publishes an event it makes sure our subscriber
  * is notified - that is achieved by calling the `captureEvent()` method.
  *
