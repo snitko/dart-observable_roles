@@ -1,4 +1,4 @@
-part of observable;
+part of observable_roles;
 
 abstract class Publisher {
 
