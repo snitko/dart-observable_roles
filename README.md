@@ -77,4 +77,4 @@ Now we create buttons, create a subscriber object and subscribe it to all the pu
       some_button.publishEvent('click');  // => "A click event was triggered"
     }
 
-This code can be found and run from the `/examples/three_buttons.dart` file.
+This code can be found and run from the `/example/three_buttons.dart` file.
