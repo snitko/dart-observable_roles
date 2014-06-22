@@ -30,7 +30,7 @@ Code example
 
 The following would be an example code implementing the scenario with the three buttons described above:
 
-    import '../lib/observable_roles.dart';
+    import 'package:observable_roles';
 
 Let's create a class that includes the Subscriber mixin and define event handlers in this class:
 
