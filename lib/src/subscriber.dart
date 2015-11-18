@@ -53,8 +53,8 @@ abstract class Subscriber {
    * _releaseQueuedEvents(). Really, if listening lock is off, it may be just
    * this one event in the queue, but we have to be sure.
    */
-  captureEvent(e, [data=null]) {
-    events_queue.add({ 'name': e, 'data': data});
+  captureEvent(name, publisher_roles, [data=null]) {
+    events_queue.add({ 'name': name, 'publisher_roles': publisher_roles, 'data': data});
     if(listening_lock == false) _releaseQueuedEvents();
   }
 
@@ -67,39 +67,36 @@ abstract class Subscriber {
   _releaseQueuedEvents() {
     while(!events_queue.isEmpty && listening_lock == false) {
       var e = events_queue.removeAt(0);
-      _handleEvent(e['name'], e['data']);
+      _handleEvent(_pickEvent(e['name'], e['publisher_roles']), e['data']);
     }
     _listening_lock = false;
+  }
+
+  _pickEvent(name, publisher_roles) {
+    if(event_handlers[name] != null) {
+      if(publisher_roles != null) {
+        var picked_handler;
+        publisher_roles.forEach((r) {
+          if(event_handlers[name].keys.contains(r))
+            picked_handler = event_handlers[name][r]; return;
+        });
+        if(picked_handler != null)
+          return picked_handler;
+      }
+      if(event_handlers[name][#all] != null) {
+        return event_handlers[name][#all];
+      }
+    }
   }
 
   /**
    * Invokes an assigned event handler for the event, passes itself to it. 
    */
-  _handleEvent(e, [data=null]) {
-
-    if(event_handlers[e] != null) {
-      if(data != null) {
-        event_handlers[e](reflect(this).reflectee, data);
-      } else {
-        event_handlers[e](reflect(this).reflectee);
-      }
-    }
-
-    // Subscriber can be a publisher at the same time
-    // and have its own list of subscribers. A Russian Doll, if you may.
-    // However, we only publish those events that directly belong to this subscriber,
-    // that is:
-    //    'DummyPublisher.update'
-    //
-    // won't be published, but this one will:
-    //    'update'
-    //
-    // That way you can control perfectly what is being propagated. For instance,
-    // you can set an event handler for 'DummyPublisher.update' which, in turn, triggers
-    // a handler for 'update' event and this last one gets propagated.
-    if(this is Publisher && !e.contains('.') && event_handlers.keys.contains(e))
-      publishEvent(e);
-
+  _handleEvent(e,[data=null]) {
+    if(e != null && data != null)
+      e(reflect(this).reflectee, data);
+    else
+      e(reflect(this).reflectee);
   }
 
 }

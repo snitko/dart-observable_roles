@@ -19,7 +19,7 @@ abstract class Publisher {
   /// the `Subscriber#captureEvent()` method. It essentially defines
   /// which handler (if any) in the subscriber is going to be invoked
   /// for the event.
-  String role = null;
+  List<String> roles = [];
 
   /**
    * Adds new subscriber to the list of subscribers, who observe this publisher.
@@ -49,12 +49,6 @@ abstract class Publisher {
 
     if(data==null) { data = reflect(this).reflectee; }
     
-    var caller_name;
-    if(role != null)
-      caller_name = role;
-    else
-      caller_name = MirrorSystem.getName(reflect(this).type.simpleName);
-
     // A shadow copy is used, because each subscriber may want to remove itself from the
     // observing list of the publisher while processing an event.
     // And that would cause a modyfing iterable list error.
@@ -64,7 +58,7 @@ abstract class Publisher {
     });
     
     observing_subscribers_shadow.forEach((s) {
-      s.captureEvent("${caller_name}.$event_name", data);
+      s.captureEvent(event_name, this.roles, data);
     });
 
   }
