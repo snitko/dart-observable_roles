@@ -1,4 +1,4 @@
-import 'package:unittest/unittest.dart';
+import "package:test/test.dart";
 import 'dart:mirrors';
 import '../lib/observable_roles.dart';
 
@@ -18,7 +18,7 @@ class DummySubscriber extends Object with Subscriber, Publisher {
  
 }
 
-main() {
+void main() {
 
   var publisher;
   var subscriber;
