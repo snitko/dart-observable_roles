@@ -3,11 +3,30 @@ part of observable_roles;
 /**
  * Watches publishers for events they emit, then reacts to each event by invoking event handlers.
  *
+ * USAGE:
+ *
+ * 1. Define event handlers using the `event_handlers` property:
+ *
+ *   Map event_handlers = {
+ *     'mouseover' : {
+ *       #all:               () => print("A default event handler for all publishers, irrespective of their roles"),
+ *       'button':           () => print("An event handler for publishers with the 'button' role only"),
+ *       ['button', 'link']: () => print("An event handler for publishers with both 'button' AND 'link' roles")
+ *     },
+ *     'click' : {
+ *       #all : (self, p) => print("A default event handler for all publishers, irrespective of their roles"),
+ *     }
+ *   }; 
+ *
+ * 2. Call `publishEvent('mouseover')` on the publisher.
+ *
+ * EXPLANATION:
+ *
  * Subscriber objects are added into publisher's `Pubslisher#observing_subscribers` List.
  * Every time such a publisher publishes an event it makes sure our subscriber
  * is notified - that is achieved by calling the `captureEvent()` method.
  *
- * `captureEvent()` in turn, doesn't autmoatically execute the event handler,
+ * `captureEvent()` in turn, doesn't automatically execute the event handler,
  * but simply adds the event to queue. This is because we want to process events
  * one by one and the order of executing the handlers may matter. After the event
  * is added into the queue, it calls `_releaseQueuedEvents()` which invokes event
@@ -72,28 +91,53 @@ abstract class Subscriber {
     _listening_lock = false;
   }
 
+  /**
+    * Picks an appropriate event handler from the subscriber to be called in response to an
+    * event from the publisher. There are various possibilities for event handlers to be defined in subscriber.
+    * This method assumes the following format for event handlers:
+    *
+    *   'update': {
+    *     #all:               () => print("A default event handler for all publishers, irrespective of their roles"),
+    *     'button':           () => print("An event handler for publishers with the 'button' role only"),
+    *     ['button', 'link']: () => print("An event handler for publishers with both 'button' AND 'link' roles")
+    *   }
+    *
+    * Keep in mind that regardless of the the order in which those event handlers are defined,
+    * single role even handlers always get a priority, followed by multi-role event handlers and, finally,
+    * a default event handler is used.
+  */
   _pickEvent(name, publisher_roles) {
     if(event_handlers[name] != null) {
       if(publisher_roles != null) {
         var picked_handler;
         publisher_roles.forEach((r) {
+          /// First, let's handle single-role event hadlers
           if(event_handlers[name].keys.contains(r)) {
-            picked_handler = event_handlers[name][r]; return;
+            picked_handler = event_handlers[name][r]; return; // Note the return here. Found a handler? That's it!
           }
+          /// If we're dealing with a multiple role event handlers, we're
+          /// going to handle them next.
           else {
             var multirole_handlers = event_handlers[name].keys.toList();
             multirole_handlers.retainWhere((k) => k is List);
             multirole_handlers.forEach((list_of_keys) {
               if(publisher_roles.toSet().intersection(list_of_keys.toSet()).isNotEmpty)
-                picked_handler = event_handlers[name][list_of_keys]; return;
+                picked_handler = event_handlers[name][list_of_keys]; return; // Note the return here. Found a handler? That's it!
             });
+            /// Problem is, the returns above only return from the closure, but not from the method.
+            /// Therefore, we need this additional variable and an additional return.
             if(picked_handler != null)
               return;
           }
         });
+        /// Same problem: the returns above only return from the closure, but not from the method.
+        /// Therefore, we need this additional variable and an additional return. Yes, this is the second time.
+        /// Perhaps we need a bit more clarity in the code. Duh.
         if(picked_handler != null)
           return picked_handler;
       }
+      /// Finally, if no handler for the publisher's roles exist, perhaps there's a default
+      /// #all handler?
       if(event_handlers[name][#all] != null) {
         return event_handlers[name][#all];
       }
