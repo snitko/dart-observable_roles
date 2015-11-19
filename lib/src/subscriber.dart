@@ -77,8 +77,19 @@ abstract class Subscriber {
       if(publisher_roles != null) {
         var picked_handler;
         publisher_roles.forEach((r) {
-          if(event_handlers[name].keys.contains(r))
+          if(event_handlers[name].keys.contains(r)) {
             picked_handler = event_handlers[name][r]; return;
+          }
+          else {
+            var multirole_handlers = event_handlers[name].keys.toList();
+            multirole_handlers.retainWhere((k) => k is List);
+            multirole_handlers.forEach((list_of_keys) {
+              if(publisher_roles.toSet().intersection(list_of_keys.toSet()).isNotEmpty)
+                picked_handler = event_handlers[name][list_of_keys]; return;
+            });
+            if(picked_handler != null)
+              return;
+          }
         });
         if(picked_handler != null)
           return picked_handler;

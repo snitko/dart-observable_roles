@@ -76,6 +76,19 @@ void main() {
 
     });
 
+    test('handles events from two different children with two different roles using the same handler', () {
+      var publisher1 = new DummyPublisher();
+      var publisher2 = new DummyPublisher();
+      publisher1.roles = ['role1'];
+      publisher2.roles = ['role2'];
+      publisher1.addObservingSubscriber(subscriber);
+      publisher2.addObservingSubscriber(subscriber);
+      publisher1.publishEvent('updated');
+      publisher2.publishEvent('updated');
+      expect(subscriber.event_handlers_called.length, 2);
+      expect(subscriber.event_handlers_called, contains('an #updated event for two roles'));
+    });
+
   });
 
 }
