@@ -59,22 +59,22 @@ void main() {
       expect(subscriber.event_handlers_called, contains('#updated event for dummy'));
     });
     
-    /*test('queues events when it is locked', () {*/
-      /*publisher.addObservingSubscriber(subscriber);*/
+    test('queues events when it is locked', () {
+      publisher.addObservingSubscriber(subscriber);
 
-      /*subscriber.listening_lock = true;*/
-      /*publisher.publishEvent('queued_event');*/
-      /*publisher.publishEvent('queued_event');*/
-      /*expect(subscriber.events_queue.length, equals(2));*/
-      /*expect(subscriber.event_handlers_called.length, equals(0));*/
-      /*expect(subscriber.event_handlers_called.contains('#queued_event'), isFalse);*/
+      subscriber.listening_lock = true;
+      publisher.publishEvent('queued_event');
+      publisher.publishEvent('queued_event');
+      expect(subscriber.events_queue.length, equals(2));
+      expect(subscriber.event_handlers_called.length, equals(0));
+      expect(subscriber.event_handlers_called, isEmpty);
 
-      /*subscriber.listening_lock = false;*/
-      /*expect(subscriber.events_queue.length, equals(0));*/
-      /*expect(subscriber.event_handlers_called.length, equals(2));*/
-      /*expect(subscriber.event_handlers_called.contains('#queued_event'), isTrue);*/
+      subscriber.listening_lock = false;
+      expect(subscriber.events_queue.length, equals(0));
+      expect(subscriber.event_handlers_called.length, equals(2));
+      expect(subscriber.event_handlers_called, contains('#queued_event for all children'));
 
-    /*});*/
+    });
 
   });
 
