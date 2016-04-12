@@ -38,7 +38,7 @@ class EventHandlersMap {
       _map = {};
   }
 
-  add({event: null, role: null, handler: null}) {
+  add({event: null, role: #self, handler: null}) {
     if(!_map.containsKey(event))
       _map[event] = {};
     _map[event][role] = handler;
