@@ -2,24 +2,30 @@ import "package:test/test.dart";
 import 'dart:mirrors';
 import '../lib/observable_roles.dart';
 
+var original_event_handlers = {
+  'updated' : {
+    #self              : (self, p) => self.event_handlers_called.add('#updated event for self'),
+    #all               : (self, p) => self.event_handlers_called.add('#updated event for all roles'),
+    'dummy'            : (self, p) => self.event_handlers_called.add('#updated event for dummy'),
+    ['role1', 'role2'] : (self, p) => self.event_handlers_called.add('an #updated event for two roles')
+  },
+  'queued_event' : {
+    #all : (self, p) => self.event_handlers_called.add('#queued_event for all children'),
+  }
+};
+
 class DummyPublisher extends Object with Publisher {}
-
 class DummySubscriber extends Object with Subscriber, Publisher {
-  
   var event_handlers_called = [];
+  var event_handlers = new EventHandlersMap(original_event_handlers);
 
-  Map event_handlers = {
-    'updated' : {
-      #self              : (self, p) => self.event_handlers_called.add('#updated event for self'),
-      #all               : (self, p) => self.event_handlers_called.add('#updated event for all roles'),
-      'dummy'            : (self, p) => self.event_handlers_called.add('#updated event for dummy'),
-      ['role1', 'role2'] : (self, p) => self.event_handlers_called.add('an #updated event for two roles')
-    },
-    'queued_event' : {
-      #all : (self, p) => self.event_handlers_called.add('#queued_event for all children'),
-    }
-  };
- 
+  DummySubscriber() {
+    event_handlers.add(
+      role: 'role7', event: 'deleted',
+      handler: (self, p) => self.event_handlers_called.add('a #deleted event for role7')
+    );
+  }
+
 }
 
 void main() {
@@ -89,6 +95,46 @@ void main() {
       expect(subscriber.event_handlers_called, contains('an #updated event for two roles'));
     });
 
+    test('handlers added with EventHandlersMap methods are invoked correctly', () {
+      publisher.roles = ['role7'];
+      publisher.addObservingSubscriber(subscriber);
+      publisher.publishEvent('deleted');
+      expect(subscriber.event_handlers_called, contains('a #deleted event for role7'));
+    });
+
+  });
+
+  group('EventHandlersMap', () {
+
+    var event_handlers;
+
+    setUp(() {
+      event_handlers = new EventHandlersMap(original_event_handlers);
+    });
+
+    test('adds a single handler for role and event', () {
+      event_handlers.add(role: 'role3', event: 'updated', handler: () => print("role3#updated"));
+      expect(event_handlers["updated"]["role3"], isNotNull);
+    });
+
+    test('adds multiple handlers for one role but many events', () {
+      event_handlers.add_for_role('role4', {
+        'updated': () => print("role4#updated"),
+        'saved':   () => print("role4#saved"),
+      });
+      expect(event_handlers["updated"]["role4"], isNotNull);
+      expect(event_handlers["saved"]["role4"],   isNotNull);
+    });
+
+    test('adds multiple handlers for one event but many roles', () {
+      event_handlers.add_for_event('saved', {
+        'role5': () => print("role5#saved"),
+        'role6': () => print("role6#saved"),
+      });
+      expect(event_handlers["saved"]["role5"], isNotNull);
+      expect(event_handlers["saved"]["role6"], isNotNull);
+    });
+  
   });
 
 }

@@ -48,7 +48,7 @@ abstract class Subscriber {
   ///
   /// Those are invoked each time an event with the specified key is fired
   /// by one of the publishers this subscriber watches.
-  Map event_handlers = {}; 
+  var event_handlers = new EventHandlersMap(); 
 
   // Whenever this one is set to true, we put events in a waiting queue
   // will put events in a queue and wait until it's true again -
@@ -65,7 +65,7 @@ abstract class Subscriber {
   List events_queue = [];
 
   /**
-   * Captures events but does not execute it.
+   * Captures event but does not execute it.
    * 
    * Instead, adds event to a queue,
    * then unless listening_lock is on, releases all of the queued events with
