@@ -1,5 +1,29 @@
 part of observable_roles;
 
+/**
+ * This class helps define/add/remove Event Handlers for Subscriber in a way that's
+ * not completely ugly. Basically, event handlers is a 2-level Map, but it's difficult to manage it in a
+ * reasonable way without resorting to traversing it in some ugly manner.
+ *
+ * Initially, a map may be passed to the constructor, but the idea is that actual users will use
+ * it inside their classes constructors like this:
+ *
+ *   class MyComponent implements Subscriber {
+ *
+ *     var event_handlers = new EventHandlersMap();
+ *
+ *     MyComponent() {
+ *       event_handlers.add(...);
+ *       event_handlers.add_for_role('button', ...);
+ *       event_handlers.add_for_event('click', ...);
+ *     }
+ *
+ *   }
+ *
+ * For convenience, it implements Map's [] operator, although it doesn't implement all Map interface.
+ * Due to language constraints, it made no sense to inherit from Map.
+ *  
+**/ 
 class EventHandlersMap {
 
   Map _map;
