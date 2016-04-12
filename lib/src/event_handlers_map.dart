@@ -27,6 +27,7 @@ part of observable_roles;
 class EventHandlersMap {
 
   Map _map;
+  get map => _map;
 
   operator [](i) => _map[i]; 
 
