@@ -4,6 +4,8 @@ class EventHandlersMap {
 
   Map _map;
 
+  operator [](i) => _map[i]; 
+
   EventHandlersMap([source_map=null]) {
     if(source_map is Map)
       _map = source_map;
@@ -12,7 +14,7 @@ class EventHandlersMap {
   }
 
   add({event: null, role: null, handler: null}) {
-    if(_map[event] == null)
+    if(!_map.containsKey(event))
       _map[event] = {};
     _map[event][role] = handler;
   }
@@ -25,6 +27,19 @@ class EventHandlersMap {
     handlers.forEach((k,v) => this.add(event: event, role: k, handler: v));
   }
 
-  operator [](i) => _map[i]; 
+  remove({event: null, role: null}) {
+    if(_map.containsKey(event) && _map[event].containsKey(role))
+      _map[event].remove(role);
+    if(_map[event].length == 0)
+      _map.remove(event);
+  }
+
+  remove_for_role(String role, List handlers) {
+    handlers.forEach((i) => this.remove(event: i, role: role));
+  }
+
+  remove_for_event(String event, List handlers) {
+    handlers.forEach((i) => this.remove(event: event, role: i));
+  }
 
 }

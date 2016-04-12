@@ -117,24 +117,36 @@ void main() {
       expect(event_handlers["updated"]["role3"], isNotNull);
     });
 
-    test('adds multiple handlers for one role but many events', () {
+    test('removes a single handler for role and event', () {
+      event_handlers.remove(role: 'dummy', event: 'updated');
+      expect(event_handlers["updated"]["dummy"], isNull);
+    });
+
+    test('adds and then removes multiple handlers for one role but many events', () {
       event_handlers.add_for_role('role4', {
         'updated': () => print("role4#updated"),
         'saved':   () => print("role4#saved"),
       });
       expect(event_handlers["updated"]["role4"], isNotNull);
       expect(event_handlers["saved"]["role4"],   isNotNull);
+
+      event_handlers.remove_for_role('role4', ["updated", "saved"]);
+      expect(event_handlers["updated"]["role4"], isNull);
+      expect(event_handlers["saved"], isNull);
     });
 
-    test('adds multiple handlers for one event but many roles', () {
+    test('adds and then removes multiple handlers for one event but many roles', () {
       event_handlers.add_for_event('saved', {
         'role5': () => print("role5#saved"),
         'role6': () => print("role6#saved"),
       });
       expect(event_handlers["saved"]["role5"], isNotNull);
       expect(event_handlers["saved"]["role6"], isNotNull);
+
+      event_handlers.remove_for_event('saved', ["role5", "role6"]);
+      expect(event_handlers["saved"], isNull);
     });
-  
+
   });
 
 }
