@@ -72,7 +72,6 @@ abstract class Subscriber {
    * this one event in the queue, but we have to be sure.
    */
   captureEvent(name, publisher_roles, [data=null]) {
-    print("$name, $publisher_roles, $data");
     events_queue.add({ 'name': name, 'publisher_roles': publisher_roles, 'data': data});
     if(listening_lock == false) _releaseQueuedEvents();
   }
