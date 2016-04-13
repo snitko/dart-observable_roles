@@ -102,6 +102,14 @@ void main() {
       expect(subscriber.event_handlers_called, contains('a #deleted event for role7'));
     });
 
+    test("ignores an event if there's no handler for it", () {
+      publisher.addObservingSubscriber(subscriber);
+      publisher.roles = ['dummy'];
+      expect(() => publisher.publishEvent('non-existent-event'), returnsNormally);
+      publisher.roles = ['non-existent-role'];
+      expect(() => publisher.publishEvent('non-existent-event'), returnsNormally);
+    });
+
   });
 
   group('EventHandlersMap', () {

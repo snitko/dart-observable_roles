@@ -50,9 +50,8 @@ abstract class Subscriber {
   /// by one of the publishers this subscriber watches.
   var event_handlers = new EventHandlersMap(); 
 
-  // Whenever this one is set to true, we put events in a waiting queue
-  // will put events in a queue and wait until it's true again -
-  // then it's going to publish the event.
+  // Whenever this one is set to true, we put events in a waiting queue and wait
+  // until it's true again - then it's going to publish the event.
   bool _listening_lock = false;
 
   get listening_lock => _listening_lock;
@@ -73,6 +72,7 @@ abstract class Subscriber {
    * this one event in the queue, but we have to be sure.
    */
   captureEvent(name, publisher_roles, [data=null]) {
+    print("$name, $publisher_roles, $data");
     events_queue.add({ 'name': name, 'publisher_roles': publisher_roles, 'data': data});
     if(listening_lock == false) _releaseQueuedEvents();
   }
@@ -85,8 +85,14 @@ abstract class Subscriber {
    */
   _releaseQueuedEvents() {
     while(!events_queue.isEmpty && listening_lock == false) {
-      var e = events_queue.removeAt(0);
-      _handleEvent(_pickEvent(e['name'], e['publisher_roles']), e['data']);
+      var e     = events_queue.removeAt(0);
+      var event = _pickEvent(e['name'], e['publisher_roles']);
+      if(event == null) 
+        /// Simply ignore the event if the handler doesn't exist, but print a warning.
+        /// TODO: use logger instead of print here, also check strictness of the runtime
+        print("WARNING: no handlers for event `${e['name']}`, roles `${e['publisher_roles']}`");
+      else
+        _handleEvent(event, e['data']);
     }
     _listening_lock = false;
   }
