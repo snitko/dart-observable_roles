@@ -35,29 +35,31 @@ The following would be an example code implementing the scenario with the three 
 Let's create a class that includes the Subscriber mixin and define event handlers in this class:
 
     class MySubscriber extends Object with Subscriber {
-      Map event_handlers = {
-        'file_terminator.click'  : (self, data) => print("Deleting files"),
-        'document_creator.click' : (self, data) => print("Creating a new document"),
-        'motivator.click'        : (self, data) => print("Showing a motivational video"),
-        'Button.click'           : (self, data) => print("A click event was triggered")
-      };
+      var event_handlers = {
+        'click' : {
+          #all : (self, p) => print("A click event was triggered"),
+          'file_terminator'  => print("Deleting files"),
+          'document_creator' => print("Creating a new document"),
+          'motivator'        => print("Showing a motivational video")
+        }
+      }; 
     }
 
 Then we create a Button class. It'll be the same class for all buttons, because remeber - buttons
 behave in the same way (color implementation is left out of it):
 
     class Button extends Object with Publisher {
-      String role = null;  // default is null, you don't have to write it
-      Button([this.role]); // Set the role while creating an object
+      String roles = []
+      Button([this.roles]); // Set roles when creating an object
     }
 
 Now we create buttons, create a subscriber object and subscribe it to all the publishers
 (that is, Buttons). Then check what happens when we trigger a `click` event:
 
     main() {
-      var red_button   = new Button('file_terminator');
-      var green_button = new Button('document_creator');
-      var blue_button  = new Button('motivator');
+      var red_button   = new Button(['file_terminator']);
+      var green_button = new Button(['document_creator']);
+      var blue_button  = new Button(['motivator']);
 
       // This button doesn't have any role, so it will pass its
       // class name as a role later.
@@ -77,4 +79,18 @@ Now we create buttons, create a subscriber object and subscribe it to all the pu
       some_button.publishEvent('click');  // => "A click event was triggered"
     }
 
-This code can be found and run from the `/example/three_buttons.dart` file.
+You're probably wondering if there's a simpler, nicer way of adding event_handlers to the Subscriber,
+and the answer is, yes there is. Here's an alternative:
+
+  class MyComponent implements Subscriber {
+    var event_handlers = new EventHandlersMap();
+    MyComponent() {
+      event_handlers.add(event: ..., role: ..., handler: ...);
+      event_handlers.add_for_role('button', [a Map, event: handler]);
+      event_handlers.add_for_event('click', [a Map, role:  handler]);
+    }
+  }
+
+Not that #add, #add_for_role and #add_for_event methods are called inside a constructor.
+This is because event_handlers is an instance variable and can be accessed only within
+object's context.
