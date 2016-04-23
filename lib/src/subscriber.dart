@@ -86,11 +86,7 @@ abstract class Subscriber {
     while(!events_queue.isEmpty && listening_lock == false) {
       var e     = events_queue.removeAt(0);
       var event = _pickEvent(e['name'], e['publisher_roles']);
-      if(event == null) 
-        /// Simply ignore the event if the handler doesn't exist, but print a warning.
-        /// TODO: use logger instead of print here, also check strictness of the runtime
-        print("WARNING: no handlers for event `${e['name']}`, roles `${e['publisher_roles']}`");
-      else
+      if(event != null)
         _handleEvent(event, e['data']);
     }
     _listening_lock = false;
