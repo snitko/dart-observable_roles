@@ -157,7 +157,7 @@ void main() {
 
     test("checks whether an event handler exists for the given role and event", () {
       expect(event_handlers.hasHandlerFor(role: 'role1', event: 'updated'), isTrue);
-      expect(event_handlers.hasHandlerFor(role: 'role3', event: 'updated'), isFalse);
+      expect(event_handlers.hasHandlerFor(role: 'role100', event: 'updated'), isFalse);
       expect(event_handlers.hasHandlerFor(role: #self, event: 'updated'), isTrue);
       expect(event_handlers.hasHandlerFor(role: #all, event: 'updated'), isTrue);
     });
