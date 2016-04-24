@@ -67,4 +67,18 @@ class EventHandlersMap {
     handlers.forEach((i) => this.remove(event: event, role: i));
   }
 
+  hasHandlerFor({ role, String event }) {
+    if(_map.keys.contains(event)) {
+      var has_role = false;
+      _map[event].keys.forEach((k) {
+        if((!(k is List) && k == role) || (k is List && k.contains(role))) {
+          has_role = true;
+          return;
+        }
+      });
+      return has_role;
+    }
+    return false;
+  }
+
 }
