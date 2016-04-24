@@ -71,10 +71,12 @@ class EventHandlersMap {
     if(_map.keys.contains(event)) {
       var has_role = false;
       _map[event].keys.forEach((k) {
-        if((!(k is List) && k == role) || (k is List && k.contains(role))) {
-          has_role = true;
-          return;
-        }
+        if(!(role is List))
+          role = [role];
+        role.forEach((r) {
+          if((!(k is List) && k == r) || (k is List && k.contains(r)))
+            has_role = true;
+        });
       });
       return has_role;
     }
