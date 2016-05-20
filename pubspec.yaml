@@ -5,6 +5,7 @@ description: >
   supports queueing of events and roles for publishers.
 
 author: Roman Snitko <roman.snitko@gmail.com>
-
+homepage: https://github.com/snitko/dart-observable_roles
+  
 dev_dependencies:
   test: '>=0.12.0'
