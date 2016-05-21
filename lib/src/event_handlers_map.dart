@@ -44,11 +44,11 @@ class EventHandlersMap {
     _map[event][role] = handler;
   }
 
-  add_for_role(String role, Map handlers) {
+  addForRole(String role, Map handlers) {
     handlers.forEach((k,v) => this.add(event: k, role: role, handler: v));
   }
 
-  add_for_event(String event, Map handlers) {
+  addForEvent(String event, Map handlers) {
     handlers.forEach((k,v) => this.add(event: event, role: k, handler: v));
   }
 
@@ -59,11 +59,11 @@ class EventHandlersMap {
       _map.remove(event);
   }
 
-  remove_for_role(String role, List handlers) {
+  removeForRole(String role, List handlers) {
     handlers.forEach((i) => this.remove(event: i, role: role));
   }
 
-  remove_for_event(String event, List handlers) {
+  removeForEvent(String event, List handlers) {
     handlers.forEach((i) => this.remove(event: event, role: i));
   }
 
