@@ -71,7 +71,7 @@ abstract class Subscriber {
    * _releaseQueuedEvents(). Really, if listening lock is off, it may be just
    * this one event in the queue, but we have to be sure.
    */
-  captureEvent(name, publisher_roles, [data=null]) {
+  captureEvent(name, publisher_roles, { data: null }) {
     events_queue.add({ 'name': name, 'publisher_roles': publisher_roles, 'data': data});
     if(listening_lock == false) _releaseQueuedEvents();
   }
@@ -149,10 +149,23 @@ abstract class Subscriber {
    * Invokes an assigned event handler for the event, passes itself to it. 
    */
   _handleEvent(e,[data=null]) {
-    if(e != null && data != null)
-      e(reflect(this).reflectee, data);
-    else
-      e(reflect(this).reflectee);
+    try {
+      if(e != null && data != null)
+        e(reflect(this).reflectee, data);
+      else
+        e(reflect(this).reflectee);
+    } catch(NoSuchMethodError, stack_trace) {
+      throw new EventHandlerDataException("Stack trace:\n\n" + stack_trace.toString());
+    }
   }
 
+}
+
+class EventHandlerDataException implements Exception {
+  String msg = "Wrong number of arguments for event handler.\n" +
+               "You might want to check whether your event handler " +
+               "requires data - second argument - to be sent with it.";
+  String stack_trace;
+  EventHandlerDataException(this.stack_trace);
+  String toString() => 'EventHandlerDataException: $msg\n\n$stack_trace';
 }

@@ -47,6 +47,10 @@ abstract class Publisher {
    */
   publishEvent(event_name, [data=null]) {
 
+    // if data is null, we're sending the object itself as data.
+    // This is the default behavior for children components in NestUI,
+    // which, when notifying their parents about their events, send a reference
+    // to themselves.
     if(data==null) { data = reflect(this).reflectee; }
     
     // A shadow copy is used, because each subscriber may want to remove itself from the
@@ -58,7 +62,7 @@ abstract class Publisher {
     });
     
     observing_subscribers_shadow.forEach((s) {
-      s.captureEvent(event_name, this.roles, data);
+      s.captureEvent(event_name, this.roles, data: data);
     });
 
   }
