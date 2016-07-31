@@ -149,23 +149,7 @@ abstract class Subscriber {
    * Invokes an assigned event handler for the event, passes itself to it. 
    */
   _handleEvent(e,[data=null]) {
-    try {
-      if(e != null && data != null)
-        e(reflect(this).reflectee, data);
-      else
-        e(reflect(this).reflectee);
-    } catch(NoSuchMethodError, stack_trace) {
-      throw new EventHandlerDataException("Stack trace:\n\n" + stack_trace.toString());
-    }
+    e(reflect(this).reflectee, data);
   }
 
-}
-
-class EventHandlerDataException implements Exception {
-  String msg = "Wrong number of arguments for event handler.\n" +
-               "You might want to check whether your event handler " +
-               "requires data - second argument - to be sent with it.";
-  String stack_trace;
-  EventHandlerDataException(this.stack_trace);
-  String toString() => 'EventHandlerDataException: $msg\n\n$stack_trace';
 }
