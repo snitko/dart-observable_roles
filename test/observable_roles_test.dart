@@ -162,6 +162,12 @@ void main() {
       expect(event_handlers.hasHandlerFor(role: #all, event: 'updated'), isTrue);
     });
 
+    test("adds multiple identical handlers for multiple events", () {
+      event_handlers.add(role: 'role3', event: ['updated', 'saved'], handler: () => print("role3#updated"));
+      expect(event_handlers["updated"]["role3"], isNotNull);
+      expect(event_handlers["saved"]["role3"], isNotNull);
+    });
+
   });
 
 }

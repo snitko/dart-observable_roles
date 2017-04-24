@@ -39,9 +39,14 @@ class EventHandlersMap {
   }
 
   add({event: null, role: #self, handler: null}) {
-    if(!_map.containsKey(event))
-      _map[event] = {};
-    _map[event][role] = handler;
+    if(event is String)
+      event = [event];
+    
+    event.forEach((e) {
+      if(!_map.containsKey(e))
+        _map[e] = {};
+      _map[e][role] = handler;
+    });
   }
 
   addForRole(String role, Map handlers) {
