@@ -58,10 +58,14 @@ class EventHandlersMap {
   }
 
   remove({event: null, role: null}) {
-    if(_map.containsKey(event) && _map[event].containsKey(role))
-      _map[event].remove(role);
-    if(_map[event].length == 0)
-      _map.remove(event);
+    if(event is String)
+      event = [event];
+    event.forEach((e) {
+      if(_map.containsKey(e) && _map[e].containsKey(role))
+        _map[e].remove(role);
+      if(_map[e].length == 0)
+        _map.remove(e);
+    });
   }
 
   removeForRole(String role, List handlers) {
