@@ -85,9 +85,12 @@ abstract class Subscriber {
   _releaseQueuedEvents() {
     while(!events_queue.isEmpty && listening_lock == false) {
       var e     = events_queue.removeAt(0);
-      var event = _pickEvent(e['name'], e['publisher_roles']);
-      if(event != null)
-        _handleEvent(event, e['data']);
+      var events = _pickEvent(e['name'], e['publisher_roles']);
+      if(events != null) {
+        events.forEach((event) {
+          _handleEvent(event, e['data']);
+        });
+      }
     }
     _listening_lock = false;
   }

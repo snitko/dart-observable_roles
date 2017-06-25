@@ -24,6 +24,8 @@ class DummySubscriber extends Object with Subscriber, Publisher {
       role: 'role7', event: 'deleted',
       handler: (self, p) => self.event_handlers_called.add('a #deleted event for role7')
     );
+    event_handlers.add(role: "role8", event: "deleted", handler: (self,p) => self.event_handlers_called.add('a #deleted #1 event for role8'));
+    event_handlers.add(role: "role8", event: "deleted", handler: (self,p) => self.event_handlers_called.add('a #deleted #2 event for role8'));
   }
 
 }
@@ -108,6 +110,14 @@ void main() {
       expect(() => publisher.publishEvent('non-existent-event'), returnsNormally);
       publisher.roles = ['non-existent-role'];
       expect(() => publisher.publishEvent('non-existent-event'), returnsNormally);
+    });
+
+    test("allows to add multiple handlers for each event/role", () {
+      publisher.roles = ['role8'];
+      publisher.addObservingSubscriber(subscriber);
+      publisher.publishEvent('deleted');
+      expect(subscriber.event_handlers_called, contains('a #deleted #1 event for role8'));
+      expect(subscriber.event_handlers_called, contains('a #deleted #2 event for role8'));
     });
 
   });

@@ -32,10 +32,18 @@ class EventHandlersMap {
   operator [](i) => _map[i]; 
 
   EventHandlersMap([source_map=null]) {
-    if(source_map is Map)
-      _map = source_map;
-    else
-      _map = {};
+    _map = {};
+    if(source_map is Map) {
+      source_map.forEach((event,events_map) {
+        events_map.forEach((role,handlers) {
+          if(!(handlers is List))
+            handlers = [handlers];
+          handlers.forEach((handler) {
+            this.add(event: event, role: role, handler: handler);
+          });
+        });
+      });
+    }
   }
 
   add({event: null, role: #self, handler: null}) {
@@ -45,7 +53,12 @@ class EventHandlersMap {
     event.forEach((e) {
       if(!_map.containsKey(e))
         _map[e] = {};
-      _map[e][role] = handler;
+
+      // Events may have multiple event handlers defined for them,
+      // thus there's actually a list of handlers to be invoked.
+      if(!_map[e].containsKey(role))
+        _map[e][role] = [];
+      _map[e][role].add(handler);
     });
   }
 
