@@ -178,6 +178,12 @@ void main() {
       expect(event_handlers["saved"]["role3"], isNotNull);
     });
 
+    test("strores options along with handlers", () {
+      event_handlers.add(role: 'role3', event: ['updated', 'saved'], handler: () => print("role3#updated"), options: { "special_option": true });
+      expect(event_handlers["updated"]["role3"][0]["options"]["special_option"], isTrue);
+      expect(event_handlers["saved"]["role3"][0]["options"]["special_option"], isTrue);
+    });
+
   });
 
 }

@@ -46,7 +46,13 @@ class EventHandlersMap {
     }
   }
 
-  add({event: null, role: #self, handler: null}) {
+  /** Adds a an event handler for one or more roles (`roles` can be a List of roles too).
+   * 
+   * The `option` argument here doesn't mean anything. It's reserved for other libraries
+   * using this functionality to pass something important to them to be stored
+   * along with each particular handler.
+   */
+  add({event: null, role: #self, handler: null, options: null}) {
     if(event is String)
       event = [event];
     
@@ -58,16 +64,16 @@ class EventHandlersMap {
       // thus there's actually a list of handlers to be invoked.
       if(!_map[e].containsKey(role))
         _map[e][role] = [];
-      _map[e][role].add(handler);
+      _map[e][role].add({ "handler": handler, "options": options });
     });
   }
 
-  addForRole(String role, Map handlers) {
-    handlers.forEach((k,v) => this.add(event: k, role: role, handler: v));
+  addForRole(String role, Map handlers, { options: null }) {
+    handlers.forEach((k,v) => this.add(event: k, role: role, handler: v, options: options));
   }
 
-  addForEvent(String event, Map handlers) {
-    handlers.forEach((k,v) => this.add(event: event, role: k, handler: v));
+  addForEvent(String event, Map handlers, { options: null }) {
+    handlers.forEach((k,v) => this.add(event: event, role: k, handler: v, options: options));
   }
 
   remove({event: null, role: null}) {

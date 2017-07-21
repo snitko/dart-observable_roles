@@ -48,7 +48,7 @@ abstract class Publisher {
   publishEvent(event_name, [data=null]) {
 
     // if data is null, we're sending the object itself as data.
-    // This is the default behavior for children components in NestUI,
+    // This is the default behavior for children components in Dartifact,
     // which, when notifying their parents about their events, send a reference
     // to themselves.
     if(data==null) { data = reflect(this).reflectee; }

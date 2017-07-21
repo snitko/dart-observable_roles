@@ -151,8 +151,8 @@ abstract class Subscriber {
   /**
    * Invokes an assigned event handler for the event, passes itself to it. 
    */
-  _handleEvent(e,[data=null]) {
-    e(reflect(this).reflectee, data);
+  _handleEvent(handler_and_options,[data=null]) {
+    handler_and_options["handler"](reflect(this).reflectee, data);
   }
 
 }
