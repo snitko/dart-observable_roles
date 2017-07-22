@@ -77,6 +77,13 @@ abstract class Subscriber {
   }
 
   /**
+   * Invokes an assigned event handler for the event, passes itself to it. 
+   */
+  handleEvent(handler_and_options,[data=null]) {
+    handler_and_options["handler"](reflect(this).reflectee, data);
+  }
+
+  /**
    * Releases all the events that were previously queued due to listening lock.
    * 
    * It checks for the lock on each event release, so if while the loop is running
@@ -88,7 +95,7 @@ abstract class Subscriber {
       var events = _pickEvent(e['name'], e['publisher_roles']);
       if(events != null) {
         events.forEach((event) {
-          _handleEvent(event, e['data']);
+          handleEvent(event, e['data']);
         });
       }
     }
@@ -146,13 +153,6 @@ abstract class Subscriber {
         return event_handlers[name][#all];
       }
     }
-  }
-
-  /**
-   * Invokes an assigned event handler for the event, passes itself to it. 
-   */
-  _handleEvent(handler_and_options,[data=null]) {
-    handler_and_options["handler"](reflect(this).reflectee, data);
   }
 
 }
