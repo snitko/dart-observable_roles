@@ -1,5 +1,5 @@
 name: observable_roles
-version: 0.1.43
+version: 0.1.44
 description: >
   An implementation of Observable pattern that also
   supports queueing of events and roles for publishers.
