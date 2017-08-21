@@ -72,7 +72,7 @@ class EventHandlersMap {
     handlers.forEach((k,v) => this.add(event: k, role: role, handler: v, options: options));
   }
 
-  addForEvent(String event, Map handlers, { options: null }) {
+  addForEvent(event, Map handlers, { options: null }) {
     handlers.forEach((k,v) => this.add(event: event, role: k, handler: v, options: options));
   }
 
